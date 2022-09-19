@@ -5,6 +5,11 @@ public class DynamicArray<T> {
     private int length;
     private T[] elements;
 
+    public DynamicArray () {
+        length = 0;
+        elements = (T[])  new Object[1];
+    }
+
     public DynamicArray (T[] elements) {
         this.elements = elements;
         length = elements.length;
@@ -12,10 +17,16 @@ public class DynamicArray<T> {
 
 
     public void add(T el) {
-        if (elements.length >= length) {
-            elements = Arrays.copyOf(Arrays.copyOf(elements, elements.length), length*2);
+        if (length == 0) {
+            elements = (T[])  new Object[1];
+            elements[0] = el;
+            length = 1;
+        } else {
+            if (elements.length >= length) {
+                elements = Arrays.copyOf(Arrays.copyOf(elements, elements.length), length * 2);
+            }
+            elements[length++] = el;
         }
-        elements[length++] = el;
     }
 
     public void remove(int index) {
@@ -26,7 +37,7 @@ public class DynamicArray<T> {
         length--;
     }
     public T get(int index) {
-        if ((index < 0) || (index > length)) {
+        if ((index < 0) || (index >= length)) {
             throw new ArrayIndexOutOfBoundsException();
         }
         return elements[index];
