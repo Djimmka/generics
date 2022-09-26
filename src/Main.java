@@ -1,33 +1,21 @@
 import java.io.*;
-import java.lang.reflect.Array;
-import java.nio.*;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.lang.Object.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public class Main {
 
     public static <T> Set<T> symmetricDifference(Set<? extends T> set1, Set<? extends T> set2) {
         Set<T> result = new HashSet<>(set1);
-        Iterator<? extends  T> iter = set2.iterator();
-
-        try {
-            while (iter.hasNext()) {
-                Object elem = iter.next();
-                if (!(result.add((T) elem))) {
-                    Iterator<? extends  T> iter2 = result.iterator();
-                    while (iter2.hasNext()) {
-                        if (elem.equals(iter2.next())) {
-                            result.remove(elem);
-                            break;
-                        }
-                    }
-                }
-                //iter.next();
-            }
-        } catch (RuntimeException e) {}
+        Set<T> remove = new HashSet<>(set1);
+        remove.retainAll(set2);
+        result.addAll(set2);
+        result.removeAll(remove);
         return result;
     }
+
     public static String readAsString(InputStream inputStream, Charset charset) throws IOException {
         Reader reader = new InputStreamReader(inputStream, charset);
         BufferedReader newIn = new BufferedReader(reader);
@@ -37,22 +25,38 @@ public class Main {
         }
         return str.toString();
     }
+
     public static Map<String, Long> getSalesMap(Reader reader) {
+        //решить через merge
         BufferedReader newIn = new BufferedReader(reader);
         Map<String, Long> result = new HashMap<>();
         try {
             while (newIn.ready()) {
                 String readed = newIn.readLine();
                 String[] employe = readed.split(" ");
+                result.merge(employe[0], Long.parseLong(employe[1]), Long::sum);
                 if (result.containsKey(employe[0])) {
                     result.replace(employe[0], Long.sum(result.get(employe[0]), Long.parseLong(employe[1])));
                 } else {
                     result.put(employe[0], Long.parseLong(employe[1]));
                 }
             }
-        }catch (IOException e) {}
+        } catch (IOException e) {
+        }
         return result;
     }
+
+
+
+
+    public static <T, U> Function<T, U> ternaryOperator(
+            Predicate<? super T> condition,
+            Function<? super T, ? extends U> ifTrue,
+            Function<? super T, ? extends U> ifFalse) {
+        return s -> (condition.test(s)) ? (ifTrue.apply(s)) : (ifFalse.apply(s));
+    }
+
+
     public static void main(String[] args) {
 //        Pair<Integer, String> pair = Pair.of(1, "hello");
 //        Integer i = pair.getFirst(); // 1
@@ -78,22 +82,19 @@ public class Main {
 //        System.out.println(set3);
 
         Scanner scanner = new Scanner(System.in);
-        List<Integer> result = new ArrayList<>();
-        for (; scanner.hasNextInt();) {
-            result.add(scanner.nextInt());
+        Deque<Integer> read = new ArrayDeque<>();
+        boolean isEven = false;
+        while (scanner.hasNextInt()) {
+            if (isEven) {
+                read.addFirst(scanner.nextInt());
+            } else {
+                scanner.nextInt();
+            }
+            isEven = !(isEven);
         }
-        int l = result.toArray().length;
-        boolean odd = false;
-        if (!((l % 2) == 1)) {
-            odd = true;
-        }
-        Collections.reverse(result);
-        Iterator it = result.iterator();
-        while (it.hasNext()) {
-            if
-        }
-
-        System.out.println(result);
-
+        StringBuilder str = new StringBuilder();
+        read.forEach(readed -> str.append(readed + " "));
+        str.deleteCharAt(str.lastIndexOf(" "));
+        System.out.println(str);
     }
 }

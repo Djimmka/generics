@@ -36,6 +36,9 @@ public class DynamicArray<T> {
         elements = tmpArr;
         length--;
     }
+
+
+
     public T get(int index) {
         if ((index < 0) || (index >= length)) {
             throw new ArrayIndexOutOfBoundsException();
