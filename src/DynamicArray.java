@@ -1,13 +1,10 @@
-import java.sql.Array;
 import java.util.Arrays;
 
 public class DynamicArray<T> {
-    private int length;
-    private T[] elements;
+    private int length = 0;
+    private T[] elements = null;
 
     public DynamicArray () {
-        length = 0;
-        elements = (T[])  new Object[1];
     }
 
     public DynamicArray (T[] elements) {
@@ -18,7 +15,7 @@ public class DynamicArray<T> {
 
     public void add(T el) {
         if (length == 0) {
-            elements = (T[])  new Object[1];
+            elements = (T[])  new Object[10];
             elements[0] = el;
             length = 1;
         } else {

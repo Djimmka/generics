@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.IntStream;
 
 public class Main {
 
@@ -56,6 +57,14 @@ public class Main {
         return s -> (condition.test(s)) ? (ifTrue.apply(s)) : (ifFalse.apply(s));
     }
 
+    public static IntStream pseudoRandomStream(int seed) {
+
+
+        return IntStream.iterate(seed , s -> s = (s*s/10) % 1000 );
+//        .limit(10)
+//                .forEach(System.out::println)
+    }
+
 
     public static void main(String[] args) {
 //        Pair<Integer, String> pair = Pair.of(1, "hello");
@@ -81,20 +90,23 @@ public class Main {
 //        System.out.println(set2);
 //        System.out.println(set3);
 
-        Scanner scanner = new Scanner(System.in);
-        Deque<Integer> read = new ArrayDeque<>();
-        boolean isEven = false;
-        while (scanner.hasNextInt()) {
-            if (isEven) {
-                read.addFirst(scanner.nextInt());
-            } else {
-                scanner.nextInt();
-            }
-            isEven = !(isEven);
-        }
-        StringBuilder str = new StringBuilder();
-        read.forEach(readed -> str.append(readed + " "));
-        str.deleteCharAt(str.lastIndexOf(" "));
-        System.out.println(str);
+//        Scanner scanner = new Scanner(System.in);
+//        Deque<Integer> read = new ArrayDeque<>();
+//        boolean isEven = false;
+//        while (scanner.hasNextInt()) {
+//            if (isEven) {
+//                read.addFirst(scanner.nextInt());
+//            } else {
+//                scanner.nextInt();
+//            }
+//            isEven = !(isEven);
+//        }
+//        StringBuilder str = new StringBuilder();
+//        read.forEach(readed -> str.append(readed + " "));
+//        str.deleteCharAt(str.lastIndexOf(" "));
+//        System.out.println(str);
+
+        pseudoRandomStream(13);
+
     }
 }
