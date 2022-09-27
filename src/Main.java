@@ -1,9 +1,10 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -26,6 +27,21 @@ public class Main {
         return str.toString();
     }
 
+    public static <T> void findMinMax(
+            Stream<? extends T> stream,
+            Comparator<? super T> order,
+            BiConsumer<? super T, ? super T> minMaxConsumer) {
+        //Твой код здесь
+        List<? extends T> lst = stream.collect(Collectors.toList());
+        if (lst.isEmpty()){
+            minMaxConsumer.accept(null, null);
+        } else {
+            Stream<? extends T> s1 = (Stream<? extends T>) Stream.of(lst);
+            Stream<? extends T> s2 = (Stream<? extends T>) Stream.of(lst);
+            minMaxConsumer.accept(s1.min(order).get(), s2.max(order).get());
+        }
+    }
+
     public static Map<String, Long> getSalesMap(Reader reader) {
         //решить через merge
         BufferedReader newIn = new BufferedReader(reader);
@@ -45,7 +61,6 @@ public class Main {
         }
         return result;
     }
-
 
 
 
@@ -81,20 +96,27 @@ public class Main {
 //        System.out.println(set2);
 //        System.out.println(set3);
 
-        Scanner scanner = new Scanner(System.in);
-        Deque<Integer> read = new ArrayDeque<>();
-        boolean isEven = false;
-        while (scanner.hasNextInt()) {
-            if (isEven) {
-                read.addFirst(scanner.nextInt());
-            } else {
-                scanner.nextInt();
-            }
-            isEven = !(isEven);
-        }
-        StringBuilder str = new StringBuilder();
-        read.forEach(readed -> str.append(readed + " "));
-        str.deleteCharAt(str.lastIndexOf(" "));
-        System.out.println(str);
+        Stream<String> elements = Stream.of("abc", "klm", "xyz");
+        findMinMax(elements, Comparator.naturalOrder(), (min, max) -> System.out.println("min = " + min + " max = " + max));
+        Stream<Integer> elements2 = Stream.of(9, 88, 75, 11, 1, 2, 3);
+        findMinMax(elements2, Comparator.comparingInt(x -> x), (min, max) -> System.out.println("min = " + min + " max = " + max));
+        findMinMax(Stream.<Integer>empty(), Comparator.comparingInt(x -> x), (min, max) -> System.out.println("min = " + min + " max = " + max));
+
+
+//        Scanner scanner = new Scanner(System.in);
+//        Deque<Integer> read = new ArrayDeque<>();
+//        boolean isEven = false;
+//        while (scanner.hasNextInt()) {
+//            if (isEven) {
+//                read.addFirst(scanner.nextInt());
+//            } else {
+//                scanner.nextInt();
+//            }
+//            isEven = !(isEven);
+//        }
+//        StringBuilder str = new StringBuilder();
+//        read.forEach(readed -> str.append(readed + " "));
+//        str.deleteCharAt(str.lastIndexOf(" "));
+//        System.out.println(str);
     }
 }

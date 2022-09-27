@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class Annnimalism {
 
+
+
     class Animal implements Serializable {
         private final String name;
 
