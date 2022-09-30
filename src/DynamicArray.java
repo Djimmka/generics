@@ -2,7 +2,7 @@ import java.util.Arrays;
 
 public class DynamicArray<T> {
     private int length = 0;
-    private T[] elements = null;
+    private T[] elements = (T[])  new Object[10];
 
     public DynamicArray () {
     }
@@ -27,10 +27,9 @@ public class DynamicArray<T> {
     }
 
     public void remove(int index) {
-        T[] tmpArr = Arrays.copyOf(Arrays.copyOf(elements, index), elements.length);
-        T[] tmpArr2 = Arrays.copyOfRange(elements, index + 1, elements.length);
-        System.arraycopy(tmpArr2,0, tmpArr,index, tmpArr2.length);
-        elements = tmpArr;
+        for (int i = index + 1; i <= length; i++) {
+            elements[i-1] = elements[i];
+        }
         length--;
     }
 

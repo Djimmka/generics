@@ -1,10 +1,14 @@
 import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.*;
 
 public class Main {
 
@@ -27,20 +31,27 @@ public class Main {
         return str.toString();
     }
 
-    public static <T> void findMinMax(
-            Stream<? extends T> stream,
-            Comparator<? super T> order,
-            BiConsumer<? super T, ? super T> minMaxConsumer) {
-        //Твой код здесь
-        List<? extends T> lst = stream.collect(Collectors.toList());
-        if (lst.isEmpty()){
-            minMaxConsumer.accept(null, null);
-        } else {
-            Stream<? extends T> s1 = (Stream<? extends T>) Stream.of(lst);
-            Stream<? extends T> s2 = (Stream<? extends T>) Stream.of(lst);
-            minMaxConsumer.accept(s1.min(order).get(), s2.max(order).get());
-        }
-    }
+//    public static <T> void findMinMax(
+//            Stream<? extends T> stream,
+//            Comparator<? super T> order,
+//            BiConsumer<? super T, ? super T> minMaxConsumer) {
+//        //Твой код здесь
+//        try {
+//            stream.collect(
+//                    Collectors.teeing(
+//                            Collectors.minBy(order),
+//                            Collectors.maxBy(order),
+//                            (e1, e2) -> {
+//                                minMaxConsumer.accept(e1.orElseGet(null), e2.orElseGet(null));
+//                                return null;
+//                            }
+//                    )
+//            );
+//        } catch (NullPointerException e) {
+//            minMaxConsumer.accept(null, null);
+//        }
+//        ;
+//    }
 
     public static Map<String, Long> getSalesMap(Reader reader) {
         //решить через merge
@@ -73,50 +84,43 @@ public class Main {
 
 
     public static void main(String[] args) {
-//        Pair<Integer, String> pair = Pair.of(1, "hello");
-//        Integer i = pair.getFirst(); // 1
-//        String s = pair.getSecond(); // "hello"
-//        Pair<Integer, String> pair2 = Pair.of(1, "hello");
-//        boolean mustBeTrue = pair.equals(pair2); // true!
-//        boolean mustAlsoBeTrue = pair.hashCode() == pair2.hashCode(); // true!
-//        System.out.println("Hello world!");
-//
-//        DynamicArray<String> tes = new DynamicArray<String>(new String[]{"A", "B", "C"});
-//        //tes.add("D");
-//        tes.remove(1);
-//        tes.get(1);
-//        tes.get(3);
-//
-//        Set<Integer> set1 = new LinkedHashSet<Integer>(3);
-//        set1.add(1); set1.add(2);set1.add(3);
-//        Set<Integer> set2 = new LinkedHashSet<Integer>(3);
-//        set2.add(0); set2.add(1);set2.add(2);
-//        Set<Integer> set3 = symmetricDifference(set1, set2);
-//        System.out.println(set1);
-//        System.out.println(set2);
-//        System.out.println(set3);
-
-        Stream<String> elements = Stream.of("abc", "klm", "xyz");
-        findMinMax(elements, Comparator.naturalOrder(), (min, max) -> System.out.println("min = " + min + " max = " + max));
-        Stream<Integer> elements2 = Stream.of(9, 88, 75, 11, 1, 2, 3);
-        findMinMax(elements2, Comparator.comparingInt(x -> x), (min, max) -> System.out.println("min = " + min + " max = " + max));
-        findMinMax(Stream.<Integer>empty(), Comparator.comparingInt(x -> x), (min, max) -> System.out.println("min = " + min + " max = " + max));
-
-
-//        Scanner scanner = new Scanner(System.in);
-//        Deque<Integer> read = new ArrayDeque<>();
-//        boolean isEven = false;
-//        while (scanner.hasNextInt()) {
-//            if (isEven) {
-//                read.addFirst(scanner.nextInt());
-//            } else {
-//                scanner.nextInt();
-//            }
-//            isEven = !(isEven);
+        Charset charset = Charset.forName("UTF-8");
+        String text = "Lorem ipsum dolor sit amet, "
+                + "consectetur 32 adipiscing elit. "
+                + "Sed sodales consectetur purus at faucibus."
+                + " Donec mi quam, tempor vel ipsum non, faucibus suscipit massa. "
+                + "Morbi lacinia velit blandit 32 tincidunt 32 efficitur. "
+                + "Vestibulum eget metus imperdiet sapien laoreet faucibus. "
+                + "Nunc eget vehicula mauris, ac auctor lorem. 32 Lorem ipsum dolor sit amet,"
+                + " consectetur adipiscing elit. Integer vel odio 32 nec mi tempor dignissim.";
+        ByteArrayInputStream textInput = new ByteArrayInputStream(text.getBytes());
+        System.setIn(textInput);
+        //countOfWords(System.in, charset);
+        InputStream in = System.in;
+//Charset charset = StandardCharsets.UTF_8;
+        Stream<String> lines = null;
+        //try {
+            lines = new BufferedReader(new InputStreamReader(in, charset)).lines();
+//        } catch (UnsupportedEncodingException e) {
+//            throw new RuntimeException(e);
 //        }
-//        StringBuilder str = new StringBuilder();
-//        read.forEach(readed -> str.append(readed + " "));
-//        str.deleteCharAt(str.lastIndexOf(" "));
-//        System.out.println(str);
+//        lines.forEach(System.out::println);
+//        Stream<String> splited = Stream.of();
+        List<String> splited = Arrays.asList(lines.flatMap(p -> Arrays.asList(p.split(" ")).stream()).map(String::toLowerCase).toArray(String[]::new));
+//        splited.forEach(System.out::println);
+        Map<String , Long> counted = splited.stream()
+//                .peek(System.out :: println)
+//                .limit(10)
+                .collect(groupingBy(t -> t, counting()));
+//        counting.forEach((name , count) -> System.out.println(name + " " + count));
+        SortedMap<String, Long> sorted = new TreeMap<>(counted);
+        sorted.entrySet().stream().limit(10).forEach((word -> System.out.println(word)));//.getKey()
+//        counting.forEach(System.out::printf);
+
+
+//        List<String> collection2 = Arrays.asList("1 2 0", "4 5");
+//        List<String> collection1 = Arrays.asList("a1", "a2", "a3", "a1");
+//        List<String> collexction3 = Arrays.asList(collection2.stream().flatMap(p -> Arrays.asList(p.split(" ")).stream()).toArray(String[]::new));
+//        collexction3.stream().forEach(System.out::println);
     }
 }
